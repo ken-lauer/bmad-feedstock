@@ -1,0 +1,24 @@
+diff -ru a/sim_utils/CMakeLists.txt b/sim_utils/CMakeLists.txt
+--- a/sim_utils/CMakeLists.txt
++++ b/sim_utils/CMakeLists.txt
+@@ -13,6 +13,7 @@
+   SET (INC_DIRS
+     $ENV{ACC_CONDA_PATH}/include/
+     $ENV{ACC_CONDA_PATH}/include/fgsl/
++    $ENV{ACC_CONDA_PATH}/lib/fortran/modules/plplot/
+   )
+ ELSE ()
+   SET (INC_DIRS
+diff -ru a/util/Distribution_User_Utility_Wrapper b/util/Distribution_User_Utility_Wrapper
+--- a/util/Distribution_User_Utility_Wrapper
++++ b/util/Distribution_User_Utility_Wrapper
+@@ -28,8 +28,8 @@
+     # We also remove code_examples and regression tests from the build list
+ 
+     # List of Project Directories - Order here matters!
++    # PLplot comes from the conda-forge plplot package (see sim_utils/CMakeLists.txt for the module path).
+     DIRLIST=( forest sim_utils bmad tao cpp_bmad_interface bsim util_programs lux )
+-    [ "${ACC_PLOT_PACKAGE}" == "plplot" ] && DIRLIST=( plplot ${DIRLIST[*]} )
+     [ "${CONDA_BUILD_TESTS}" ] && DIRLIST=( ${DIRLIST[*]} regression_tests )
+ else
+     # List of Project Directories - Order here matters!

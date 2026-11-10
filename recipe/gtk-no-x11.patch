@@ -1,0 +1,35 @@
+--- a/util/Master.cmake
++++ b/util/Master.cmake
+@@ -200,7 +200,9 @@
+ # locations.)
+ #-----------------------------------
+ 
+-find_package(X11)
++IF (NOT "$ENV{ACC_PLOT_DISPLAY_TYPE}" MATCHES "GTK")
++  find_package(X11)
++ENDIF ()
+ 
+ #-----------------------------------
+ # Plotting Library Linker flags
+@@ -211,7 +213,7 @@
+ IF ($ENV{ACC_PLOT_PACKAGE} MATCHES "plplot")
+   SET (PLOT_LIBRARY_FLAG "-DCESR_PLPLOT")
+ 
+-  IF (NOT "$ENV{ACC_PLOT_DISPLAY_TYPE}" MATCHES "QT")
++  IF (NOT "$ENV{ACC_PLOT_DISPLAY_TYPE}" MATCHES "QT|GTK")
+     SET (PLOT_LINK_FLAGS "-lX11 $ENV{PLOT_LINK_FLAGS}")
+   ELSE ()
+     SET (PLOT_LINK_FLAGS "$ENV{PLOT_LINK_FLAGS}")
+@@ -233,8 +235,11 @@
+     pkg_check_modules(QP_GTK REQUIRED gtk+-3.0)
+     SET (PLOT_LIBRARY_FLAG "${PLOT_LIBRARY_FLAG} -DCESR_GTK")
+     SET (ACC_PLOT_INC_DIRS ${QP_GTK_INCLUDE_DIRS})
+-    SET (SHARED_LINK_LIBS ${QP_GTK_LIBRARIES} ${SHARED_LINK_LIBS})
++    # qp_gtk_window.c uses readline; executables linking static libsim_utils.a need it too.
++    SET (SHARED_LINK_LIBS ${QP_GTK_LIBRARIES} readline ${SHARED_LINK_LIBS})
+     LIST (REMOVE_DUPLICATES SHARED_LINK_LIBS)
++    # sim_utils, bmad and tao list X11 in SHARED_DEPS unconditionally.
++    LIST (REMOVE_ITEM SHARED_DEPS X11)
+   ENDIF ()
+ 
+ ELSEIF ($ENV{ACC_PLOT_PACKAGE} MATCHES "pgplot")
